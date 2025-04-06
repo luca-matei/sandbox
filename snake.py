@@ -2,75 +2,96 @@ import pygame
 import random
 
 pygame.init()
-screen_x = 1260  # Latimea ecranului in px
-screen_y = 720  # Inaltimea ecranului in px
-screen_size = (screen_x, screen_y)
-screen = pygame.display.set_mode(screen_size)
+window_x = 1260  # Window width in px
+window_y = 720  # Window height in px
+screen = pygame.display.set_mode((window_x, window_y))
 clock = pygame.time.Clock()
 running = True
 
-l_patrat = 30  # Latimea unui patrat in px
-patrate_x = int(screen_x / l_patrat)
-patrate_y = int(screen_y / l_patrat)
-snake_sq = [2, 3]
-apple_sq = [4, 5]
-direction = "right"
+
+sq_size = 30  # Square size in px
+sqrs_x = int(window_x / sq_size)  # Number of squares in x snake_dir
+sqrs_y = int(window_y / sq_size)  # Number of squares in y snake_dir
+snake_pos = [2, 3]  # Snake position
+apple_pos = [4, 5]  # Apple position
+snake_dir = "right"  # Snake direction
 
 while running:
     for event in pygame.event.get():
+        # Check for quit window event
         if event.type == pygame.QUIT:
             running = False
+
+        # Check for key press event
         elif event.type == pygame.KEYDOWN:
+            # ESCAPE key to quit
             if event.key == pygame.K_ESCAPE:
                 running = False
-            elif event.key == pygame.K_UP and direction != "down":
-                direction = "up"
-            elif event.key == pygame.K_LEFT and direction != "right":
-                direction = "left"
-            elif event.key == pygame.K_RIGHT and direction != "left":
-                direction = "right"
-            elif event.key == pygame.K_DOWN and direction != "up":
-                direction = "down"
 
-    if direction == "up":
-        snake_sq[1] -= 1
-    elif direction == "right":
-        snake_sq[0] += 1
-    elif direction == "down":
-        snake_sq[1] += 1
-    elif direction == "left":
-        snake_sq[0] -= 1
+            # Arrow keys to change direction
+            # Note: We check for the opposite direction to prevent the snake from going back on itself
+            elif event.key == pygame.K_UP and snake_dir != "down":
+                snake_dir = "up"
+            elif event.key == pygame.K_LEFT and snake_dir != "right":
+                snake_dir = "left"
+            elif event.key == pygame.K_RIGHT and snake_dir != "left":
+                snake_dir = "right"
+            elif event.key == pygame.K_DOWN and snake_dir != "up":
+                snake_dir = "down"
+
+    # Move snake
+    if snake_dir == "up":
+        snake_pos[1] -= 1
+    elif snake_dir == "right":
+        snake_pos[0] += 1
+    elif snake_dir == "down":
+        snake_pos[1] += 1
+    elif snake_dir == "left":
+        snake_pos[0] -= 1
 
     # Check for collision with walls
-    # Marginea de sus
-    if snake_sq[1] == -1:
-        snake_sq[1] = patrate_y - 1
-    # Marginea din stanga
-    elif snake_sq[0] == -1:
-        snake_sq[0] = patrate_x - 1
-    # Marginea de jos
-    elif snake_sq[1] == patrate_y:
-        snake_sq[1] = 0
-    # Marginea din dreapta
-    elif snake_sq[0] == patrate_x:
-        snake_sq[0] = 0
+    # Upper margin
+    if snake_pos[1] == -1:
+        snake_pos[1] = sqrs_y - 1
+    # Left margin
+    elif snake_pos[0] == -1:
+        snake_pos[0] = sqrs_x - 1
+    # Lower margin
+    elif snake_pos[1] == sqrs_y:
+        snake_pos[1] = 0
+    # Right margin
+    elif snake_pos[0] == sqrs_x:
+        snake_pos[0] = 0
 
     # Check for collision with apple
-    if snake_sq == apple_sq:
-        apple_sq[0] = random.randint(0, patrate_x - 1)
-        apple_sq[1] = random.randint(0, patrate_y - 1)
+    if snake_pos == apple_pos:
+        # Generate new apple position
+        apple_pos[0] = random.randint(0, sqrs_x - 1)
+        apple_pos[1] = random.randint(0, sqrs_y - 1)
 
+    # Render background
     screen.fill("yellow")
 
-    for i in range(0, patrate_x):
-        for j in range(0, patrate_y):
-            pygame.draw.rect(screen, "#eeee00", (i * l_patrat, j * l_patrat, l_patrat, l_patrat), 1)
+    # Render grid
+    for i in range(0, sqrs_x):
+        for j in range(0, sqrs_y):
+            pygame.draw.rect(
+                screen, "#eeee00", (i * sq_size, j * sq_size, sq_size, sq_size), 1
+            )
 
-    # Apple
-    pygame.draw.rect(screen, "red", (apple_sq[0] * l_patrat, apple_sq[1] * l_patrat, l_patrat, l_patrat))
+    # Render Apple
+    pygame.draw.rect(
+        screen,
+        "red",
+        (apple_pos[0] * sq_size, apple_pos[1] * sq_size, sq_size, sq_size),
+    )
 
-    # Snake
-    pygame.draw.rect(screen, "green", (snake_sq[0] * l_patrat, snake_sq[1] * l_patrat, l_patrat, l_patrat))
+    # Render Snake
+    pygame.draw.rect(
+        screen,
+        "green",
+        (snake_pos[0] * sq_size, snake_pos[1] * sq_size, sq_size, sq_size),
+    )
 
     pygame.display.flip()
     clock.tick(5)
