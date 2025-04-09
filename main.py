@@ -45,10 +45,16 @@ def get_hash(text):
 
 
 # Create a function that takes two numbers as arguments and returns their sum here
-...
-
+def suma(numar1, numar2, numar3 = 1):
+    s = numar1 + numar2 + numar3
+    return s
+print(suma(4, 4))
+    
 # Create a function that takes a string as an argument and returns its length here
-...
+def get_string_length(text):
+    text_length = len(text)
+    return text_length
+print(get_string_length("David"))
 
 """
 Hint: Hover over the function name to see the docstring.
@@ -65,3 +71,12 @@ Next time:
 - We'll learn to create a virtual environment (crucial to development)
 - We'll create a game of Snake using Pygame - https://github.com/luca-matei/snake
 """
+
+# Multiples of 3 and 5, Problema 1:
+def suma_multipli(limit):
+    total = 0
+    for i in range(limit):
+        if i % 3 == 0 or i % 5 == 0:
+            total += i
+    return total
+print(suma_multipli(1000))
